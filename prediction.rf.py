@@ -21,7 +21,6 @@ variables = ["WARP", "Age", "DRA", "GS", "IPGS", "ERA", "RA9", "FIP", "WHIP", "K
              "Contact", "Zone", "CSProb", "CStr"]
 
 # Function to load data
-@st.cache_data
 def load_data(file_url):
     data = pd.read_csv(file_url)
     data = data.dropna()
@@ -47,7 +46,6 @@ Combined = Combined.drop(columns=['Year_y', 'YearMinusOne'])
 Combined = Combined.rename(columns={'Year_x': 'Year'})
 
 #Functions
-@st.cache_data
 def cluster_players(Combined, variables, n_clusters):
     numeric_columns = Combined[variables]
     scaler = StandardScaler()
@@ -60,7 +58,6 @@ def cluster_players(Combined, variables, n_clusters):
 
 Combined, kmeans_model, scaler = cluster_players(Combined, variables, n_clusters=4)
 
-@st.cache_data
 def train_xgb_for_clusters(Combined, variables, target_column):
     cluster_models = {}
     for cluster_id in Combined['Cluster'].unique():
@@ -100,7 +97,6 @@ def get_important_features_for_cluster(predicted_cluster, cluster_models, top_n=
     else:
         return []
 
-@st.cache_data
 def length_xgb(Combined, variables, target_column):
     X = Combined[variables]
     y = Combined[target_column]
@@ -125,7 +121,6 @@ def predict_cluster_for_new_player(player_data, kmeans_model, scaler, aav_variab
     predicted_cluster = kmeans_model.predict(scaled_data)
     return predicted_cluster[0]
 
-@st.cache_data
 def simulate_player_season(player_data, kmeans_model, scaler, aav_variables, length_model, variables, n_simulations=250, max_deviation=0.03):
     predicted_aav_values = []
     predicted_length_values = []
