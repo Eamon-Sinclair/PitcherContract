@@ -26,7 +26,6 @@ def load_data(file_url):
     data = data.dropna()
     return data
 
-
 Data = load_data(csv_url_data)
 aav_data = load_data(csv_url_contract)
 
@@ -55,7 +54,6 @@ def cluster_players(Combined, variables, n_clusters):
     Combined['Cluster'] = clusters
     return Combined, kmeans, scaler
 
-
 Combined, kmeans_model, scaler = cluster_players(Combined, variables, n_clusters=4)
 
 def train_xgb_for_clusters(Combined, variables, target_column):
@@ -80,7 +78,6 @@ def train_xgb_for_clusters(Combined, variables, target_column):
     return cluster_models
 
 aav_models = train_xgb_for_clusters(Combined, variables, target_column="AAV")
-
 
 def get_important_features_for_cluster(predicted_cluster, cluster_models, top_n=7):
     model = cluster_models.get(predicted_cluster)
@@ -154,7 +151,6 @@ st.markdown("""
     **Email**: [eamonsinclair15@gmail.com](mailto:eamonsinclair15@gmail.com), [Matthew.krakower21@gmail.com](mailto:Matthew.krakower21@gmail.com)    
     **Linkedin**: [EamonSinclair](https://www.linkedin.com/in/eamonsinclair/), [MatthewKrakower](https://www.linkedin.com/in/matthew-krakower-8b657827b/)
 """, unsafe_allow_html=True)
-
 
 #Process Data
 player_name = st.selectbox("Select a Starting Pitcher", Data['Player'].unique())
@@ -234,7 +230,6 @@ else:
     st.markdown(css, unsafe_allow_html=True)
     st.write(html_table, unsafe_allow_html=True)
 
-
     fig, axs = plt.subplots(1, 2, figsize=(12, 6))
 
     # AAV Histogram
@@ -288,7 +283,6 @@ else:
 
     st.pyplot(fig)
 
-
 #Similarity Table
 def get_most_similar_players(player_stats, cluster_players_stats, important_stats, Combined):
     distances = euclidean_distances(player_stats[important_stats], cluster_players_stats[important_stats])
@@ -306,8 +300,6 @@ def get_most_similar_players(player_stats, cluster_players_stats, important_stat
     most_similar_players = most_similar_players.set_index('Player')
     
     return most_similar_players
-
-
 
 def display_prediction_table(player_name, player_year, predicted_aav, predicted_length, predicted_cluster,
                              Combined, variables, aav_models, length_model,
@@ -357,7 +349,6 @@ def display_prediction_table(player_name, player_year, predicted_aav, predicted_
 predicted_cluster = predict_cluster_for_new_player(new_player_data, kmeans_model, scaler, variables)
 important_stats = get_important_features_for_cluster(predicted_cluster, aav_models)
 
-
 display_prediction_table(
     player_name=player_name,
     player_year=player_year,
@@ -370,4 +361,3 @@ display_prediction_table(
     length_model=length_model,  
     important_stats=important_stats  
 )
-
