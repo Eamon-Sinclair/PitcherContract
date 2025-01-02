@@ -186,9 +186,9 @@ st.markdown("""
     **Created by Eamon Sinclair and Matthew Krakower**  
     **Twitter**: [EamonSinclair](https://x.com/_EamonSinclair), [MatthewKrakower](https://x.com/MatthewKrakower)  
     **Email**: [eamonsinclair15@gmail.com](mailto:eamonsinclair15@gmail.com), [Matthew.krakower21@gmail.com](mailto:Matthew.krakower21@gmail.com)    
-    **Linkedin**: [EamonSinclair](https://www.linkedin.com/in/eamonsinclair/), [MatthewKrakower](https://www.linkedin.com/in/matthew-krakower-8b657827b/)
+    **Linkedin**: [EamonSinclair](https://www.linkedin.com/in/eamonsinclair/), [MatthewKrakower](https://www.linkedin.com/in/matthew-krakower-8b657827b/)         
+    **Data**: [Baseball Prospectus](https://www.baseballprospectus.com/)
 """, unsafe_allow_html=True)
-
 
 #Process Data
 player_name = st.selectbox("Select a Starting Pitcher", Data['Player'].unique())
