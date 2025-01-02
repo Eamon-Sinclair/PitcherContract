@@ -20,6 +20,7 @@ variables = ["WARP", "Age", "DRA", "GS", "IPGS", "ERA", "RA9", "FIP", "WHIP", "K
              "Swing", "OSwing", "ZSwing", "OContact", "ZContact", "Contact", "Zone", "CSProb", "CStr"]
 
 # Function to load data
+@st.cache_data
 def load_data(file_url):
     data = pd.read_csv(file_url)
     data = data.dropna()
@@ -43,7 +44,7 @@ Combined = Combined.drop(columns=['Year_y', 'YearMinusOne'])
 Combined = Combined.rename(columns={'Year_x': 'Year'})
 
 
-
+@st.cache_data
 def cluster_players(Combined, variables, n_clusters):
     numeric_columns = Combined[variables]
     scaler = StandardScaler()
