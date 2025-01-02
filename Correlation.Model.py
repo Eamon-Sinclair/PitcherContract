@@ -384,7 +384,7 @@ def display_prediction_table(player_name, player_year, predicted_aav, predicted_
     if not player_stats.empty:
         player_stats = player_stats[important_stats]
         player_stats = player_stats.transpose()
-        player_stats.columns = [f"{player_name} in {player_year}"]
+        player_stats.columns = ["Selected Stats"]
         player_stats = player_stats.T
     else:
         player_stats = pd.DataFrame(columns=[f"{player_name} in {player_year}"])
