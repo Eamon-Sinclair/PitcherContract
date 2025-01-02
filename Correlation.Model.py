@@ -260,7 +260,7 @@ else:
             text-align: center !important;
         }
         .dataframe th:nth-child(3), .dataframe td:nth-child(3) {  /* Targets the "Best Estimate" column */
-            background-color: #D3D3D3 !important;
+            background-color: #B9D9EB !important;
         }
     </style>
     """
