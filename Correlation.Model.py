@@ -300,7 +300,7 @@ else:
     axs[0].set_yticklabels([f'{round(tick * 1e7, 1):,}' for tick in y_ticks])
 
     ticks = axs[0].get_xticks()
-    axs[0].set_xticklabels([f'{round(tick / 1_000_000, 1)}' for tick in ticks])
+    axs[0].set_xticklabels([f'{round(tick / 1_000_000, 2)}' for tick in ticks])
 
     #Length Histogram
 
@@ -321,7 +321,7 @@ else:
     axs[1].legend()
 
     length_ticks = axs[1].get_xticks()
-    axs[1].set_xticklabels([f'{round(tick, 1)}' for tick in length_ticks])
+    axs[1].set_xticklabels([f'{round(tick, 2)}' for tick in length_ticks])
 
     st.pyplot(fig)
 
