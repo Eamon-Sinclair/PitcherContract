@@ -45,11 +45,11 @@ Combined = Combined.rename(columns={'Year_x': 'Year'})
 
 
 @st.cache_data
-def cluster_players(Combined, variables, n_clusters):
+def cluster_players(Combined, variables, n_clusters, random_state=123):
     numeric_columns = Combined[variables]
     scaler = StandardScaler()
     normalized_data = scaler.fit_transform(numeric_columns)
-    kmeans = KMeans(n_clusters=n_clusters, random_state=123)
+    kmeans = KMeans(n_clusters=n_clusters, random_state=random_state)
     clusters = kmeans.fit_predict(normalized_data)
     Combined['Cluster'] = clusters
     return Combined, kmeans, scaler
@@ -69,8 +69,7 @@ def select_features_by_correlation_per_cluster(Combined, target_column, variable
 
 Combined, kmeans_model, scaler = cluster_players(Combined, variables, n_clusters = 4)
 
-def train_xgb_for_clusters_with_selected_features_per_cluster(Combined, selected_features_per_cluster, target_column):
-
+def train_xgb_for_clusters_with_selected_features_per_cluster(Combined, selected_features_per_cluster, target_column, random_state=123):
     cluster_models = {}
     for cluster_id, selected_features in selected_features_per_cluster.items():
         cluster_data = Combined[Combined['Cluster'] == cluster_id]
@@ -78,7 +77,7 @@ def train_xgb_for_clusters_with_selected_features_per_cluster(Combined, selected
         y = cluster_data[target_column]
 
         xgb_model = xgb.XGBRegressor(
-            random_state=123,
+            random_state=random_state,
             max_depth=4,
             min_child_weight=5,
             subsample=0.8,
@@ -107,12 +106,12 @@ def select_features_by_correlation(Combined, target_column, variables, threshold
 
 length_selected_features = select_features_by_correlation(Combined, "Length", variables, threshold=0.15)
 
-def train_length_model_with_selected_features(Combined, selected_features, target_column):
+def train_length_model_with_selected_features(Combined, selected_features, target_column, random_state=123):
     X = Combined[selected_features]
     y = Combined[target_column]
 
     xgb_model = xgb.XGBRegressor(
-        random_state=123,
+        random_state=random_state,
         max_depth=4,
         min_child_weight=5,
         subsample=0.8,
@@ -134,12 +133,14 @@ def predict_cluster_for_new_player(new_player_data, kmeans_model, scaler, all_va
     return predicted_cluster[0]
 
 
-def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=100, noise_scale=0.01):
+def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=100, noise_scale=0.01, random_state=123):
+
+    np.random.seed(random_state)  # Set the seed for random number generation
 
     player_data = Data[(Data['Player'] == player_name) & (Data['Year'] == year)]
     if player_data.empty:
         print(f"No data available for {player_name} in year {year}")
-        return None, None, None, None, None, [], []
+        return None, None, None, None, None, [], None
 
     predicted_cluster = predict_cluster_for_new_player(player_data, kmeans_model, scaler, all_variables)
 
@@ -176,7 +177,6 @@ def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_va
     return (median_aav, aav_confidence_interval, median_length, 
             length_confidence_interval, predicted_cluster, 
             predicted_aav_values, predicted_length_values)
-
 
 all_variables = variables
 
