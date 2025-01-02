@@ -133,7 +133,7 @@ def predict_cluster_for_new_player(new_player_data, kmeans_model, scaler, all_va
     return predicted_cluster[0]
 
 
-def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=100, noise_scale=0.01, random_state=123):
+def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=100, noise_scale=0.03, random_state=123):
 
     np.random.seed(random_state)  # Set the seed for random number generation
 
@@ -207,7 +207,7 @@ else:
                                                                                                                                                                               Data, kmeans_model, scaler,
                                                                                                                                                                               all_variables, aav_models_per_cluster,
                                                                                                                                                                               length_model, length_selected_features,
-                                                                                                                                                                              n_simulations=100, noise_scale=0.01)
+                                                                                                                                                                              n_simulations=100, noise_scale=0.03)
     predicted_total = median_aav * round(median_length)
 
     predicted_values = {
