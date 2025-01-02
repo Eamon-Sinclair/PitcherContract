@@ -107,7 +107,6 @@ def select_features_by_correlation(Combined, target_column, variables, threshold
 
 length_selected_features = select_features_by_correlation(Combined, "Length", variables, threshold=0.15)
 
-
 def train_length_model_with_selected_features(Combined, selected_features, target_column):
     X = Combined[selected_features]
     y = Combined[target_column]
@@ -135,7 +134,7 @@ def predict_cluster_for_new_player(new_player_data, kmeans_model, scaler, all_va
     return predicted_cluster[0]
 
 
-def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=250, noise_scale=0.02):
+def simulate_player_season(player_name, year, Data, kmeans_model, scaler, all_variables, aav_models_per_cluster, length_model, length_variables, n_simulations=100, noise_scale=0.01):
 
     player_data = Data[(Data['Player'] == player_name) & (Data['Year'] == year)]
     if player_data.empty:
@@ -208,7 +207,7 @@ else:
                                                                                                                                                                               Data, kmeans_model, scaler,
                                                                                                                                                                               all_variables, aav_models_per_cluster,
                                                                                                                                                                               length_model, length_selected_features,
-                                                                                                                                                                              n_simulations=250, noise_scale=0.02)
+                                                                                                                                                                              n_simulations=100, noise_scale=0.01)
     predicted_total = median_aav * round(median_length)
 
     predicted_values = {
