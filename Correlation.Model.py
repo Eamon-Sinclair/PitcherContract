@@ -191,7 +191,7 @@ st.markdown("""
 
 
 #Process Data
-player_name = st.selectbox("Select a Starting Pitcher", ["Select a Player"] + Data['Player'].unique().tolist())
+player_name = st.selectbox("Select a Starting Pitcher", Data['Player'].unique())
 player_year = 2024
 
 #Prediction Table
