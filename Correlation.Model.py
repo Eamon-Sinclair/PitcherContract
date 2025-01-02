@@ -56,7 +56,6 @@ def cluster_players(Combined, variables, n_clusters, random_state=123):
 
 
 #AAV Model
-@st.cache_data
 def select_features_by_correlation_per_cluster(Combined, target_column, variables, threshold=0.15):
     cluster_features = {}
     for cluster_id in Combined['Cluster'].unique():
@@ -70,7 +69,6 @@ def select_features_by_correlation_per_cluster(Combined, target_column, variable
 
 Combined, kmeans_model, scaler = cluster_players(Combined, variables, n_clusters = 4)
 
-@st.cache_data
 def train_xgb_for_clusters_with_selected_features_per_cluster(Combined, selected_features_per_cluster, target_column, random_state=123):
     cluster_models = {}
     for cluster_id, selected_features in selected_features_per_cluster.items():
@@ -99,7 +97,6 @@ aav_selected_features_per_cluster = select_features_by_correlation_per_cluster(C
 aav_models_per_cluster = train_xgb_for_clusters_with_selected_features_per_cluster(Combined, aav_selected_features_per_cluster, "AAV")
 
 #Length Model
-@st.cache_data
 def select_features_by_correlation(Combined, target_column, variables, threshold=0.15):
     correlations = Combined[variables + [target_column]].corr()[target_column]
     selected_features = correlations[correlations.abs() >= threshold].index.tolist()
@@ -109,7 +106,6 @@ def select_features_by_correlation(Combined, target_column, variables, threshold
 
 length_selected_features = select_features_by_correlation(Combined, "Length", variables, threshold=0.15)
 
-@st.cache_data
 def train_length_model_with_selected_features(Combined, selected_features, target_column, random_state=123):
     X = Combined[selected_features]
     y = Combined[target_column]
