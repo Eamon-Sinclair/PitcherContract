@@ -320,6 +320,7 @@ else:
     axs[1].set_ylabel("Density")
     axs[1].legend()
 
+    length_ticks = axs[1].get_xticks()
     axs[1].set_xticklabels([f'{round(tick, 1)}' for tick in length_ticks])
 
     st.pyplot(fig)
