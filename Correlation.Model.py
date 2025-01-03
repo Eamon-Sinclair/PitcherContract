@@ -239,7 +239,7 @@ else:
         recent_length = recent_contract.iloc[0]['Length']
         recent_total = recent_aav * recent_length
 
-        predicted_values["Actual"] = [
+        predicted_values["Last FA Contract Signed"] = [
             f"${recent_aav:,.2f}",
             f"{recent_length:.2f} years",
             f"${recent_total:,.2f}"
