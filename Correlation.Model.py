@@ -191,7 +191,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 #Process Data
-player_name = st.selectbox("Select a Starting Pitcher", Data['Player'].unique())
+player_list = Data['Player'].unique()
+default_index = list(player_list).index("Corbin Burnes") if "Corbin Burnes" in player_list else 0
+
+player_name = st.selectbox("Select a Starting Pitcher", player_list, index=default_index)
 player_year = 2024
 
 #Prediction Table
