@@ -245,7 +245,7 @@ else:
             f"${recent_total:,.2f}"
         ]
     else:
-        predicted_values["Actual"] = ["No FA Contract From '21 - '24", "N/A", "N/A"]
+        predicted_values["Last FA Contract Signed"] = ["No FA Contract From '21 - '24", "N/A", "N/A"]
 
     # Create the DataFrame for the table
     table_df = pd.DataFrame(predicted_values)
