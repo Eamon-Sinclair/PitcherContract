@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
 # Load the necessary datasets
 simulated_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/Sim_Data.csv")
@@ -114,6 +115,16 @@ if player_name:
     axes[0].set_title(f"AAV Distribution for {player_name}")
     axes[0].legend(loc='upper right')
 
+    axes[0].yaxis.set_major_formatter(mticker.ScalarFormatter(useOffset=False))
+    axes[0].yaxis.get_offset_text().set_visible(False)  # Hide offset text if present
+    axes[0].ticklabel_format(style='plain', axis='y')
+
+    y_ticks = axes[0].get_yticks()
+    axes[0].set_yticklabels([f'{round(tick * 1e7, 1):,}' for tick in y_ticks])
+
+    ticks = axes[0].get_xticks()
+    axes[0].set_xticklabels([f'{round(tick / 1_000_000, 2)}' for tick in ticks])
+
     # Plot Length Probability Density
     sns.kdeplot(sim_length, fill=True, color="lightgreen", label="Length Distribution", ax=axes[1])
     axes[1].axvline(player_data['Median Length'].iloc[0], color='red', linestyle='--', label='Median Length')
@@ -210,7 +221,7 @@ if player_name:
     similarity_df['Length'] = similarity_df['Length'].apply(lambda x: f"{int(x)} years" if pd.notnull(x) else 'N/A')
 
     # Display the reordered similarity table
-    st.write("### 5 Most Similar Platform Seasons")
+    st.write("### 5 Most Similar Players with Cluster-Specific Stats")
     st.markdown(similarity_df.to_html(index=False, escape=False), unsafe_allow_html=True)
 
 
