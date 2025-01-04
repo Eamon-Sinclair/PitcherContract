@@ -110,34 +110,45 @@ if player_name:
     axes[0].axvline(player_data['Median AAV'].iloc[0], color='red', linestyle='--', label='Median AAV')
     axes[0].axvline(player_data['Lower Bound AAV'].iloc[0], color='black', linestyle='--', label='Lower Bound AAV')  # Lower bound
     axes[0].axvline(player_data['Upper Bound AAV'].iloc[0], color='black', linestyle='--', label='Upper Bound AAV')  # Upper bound
-    axes[0].set_xlabel("AAV ($M)")
-    axes[0].set_ylabel("Density")
-    axes[0].set_title(f"AAV Distribution for {player_name}")
-    axes[0].legend(loc='upper right')
+    axes[0].set_xlabel("AAV ($M)", fontsize=20)  # Increase font size for x-axis label
+    axes[0].set_ylabel("Density", fontsize=20)  # Increase font size for y-axis label
+    axes[0].set_title(f"AAV Distribution for {player_name}", fontsize=24)  # Increase font size for title
+    axes[0].legend(loc='upper right', fontsize=12)  # Increase font size for legend
 
     axes[0].yaxis.set_major_formatter(mticker.ScalarFormatter(useOffset=False))
     axes[0].yaxis.get_offset_text().set_visible(False)  # Hide offset text if present
     axes[0].ticklabel_format(style='plain', axis='y')
 
+    # Increase font size of ticks
     y_ticks = axes[0].get_yticks()
-    axes[0].set_yticklabels([f'{round(tick * 1e7, 1):,}' for tick in y_ticks])
+    axes[0].set_yticklabels([f'{round(tick * 1e7, 1):,}' for tick in y_ticks], fontsize=18)  # Increase y-tick font size
 
     ticks = axes[0].get_xticks()
-    axes[0].set_xticklabels([f'{round(tick / 1_000_000, 2)}' for tick in ticks])
+    axes[0].set_xticklabels([f'{round(tick / 1_000_000, 2)}' for tick in ticks], fontsize=18)  # Increase x-tick font size
 
-    # Plot Length Probability Density
+
     sns.kdeplot(sim_length, fill=True, color="lightgreen", label="Length Distribution", ax=axes[1])
     axes[1].axvline(player_data['Median Length'].iloc[0], color='red', linestyle='--', label='Median Length')
     axes[1].axvline(player_data['Lower Bound Length'].iloc[0], color='black', linestyle='--', label='Lower Bound Length')  # Lower bound
     axes[1].axvline(player_data['Upper Bound Length'].iloc[0], color='black', linestyle='--', label='Upper Bound Length')  # Upper bound
-    axes[1].set_xlabel("Contract Length (Years)")
-    axes[1].set_ylabel("Density")
-    axes[1].set_title(f"Length Distribution for {player_name}")
-    axes[1].legend(loc='upper right')
+    axes[1].set_xlabel("Contract Length (Years)", fontsize=20)  # Increase font size for x-axis label
+    axes[1].set_ylabel("Density", fontsize=20)  # Increase font size for y-axis label
+    axes[1].set_title(f"Length Distribution for {player_name}", fontsize=24)  # Increase font size for title
+    axes[1].legend(loc='upper right', fontsize=12)  # Increase font size for legend
+
+    # Increase font size of ticks
+# Increase font size of y-tick labels
+    y_ticks = axes[1].get_yticks()
+    axes[1].set_yticklabels([f'{tick:.2f}' for tick in y_ticks], fontsize=18)  # Increase y-tick font size
+
+    # Increase font size of x-tick labels
+    ticks = axes[1].get_xticks()
+    axes[1].set_xticklabels([f'{tick:.2f}' for tick in ticks], fontsize=18)  # Increase x-tick font size
+  # Increase x-tick font size
 
     # Display the plots
     st.pyplot(fig)
-
+    
     # Define cluster-specific stats
     cluster_stats = {
         0: ['WARP', 'IPGS', 'GS', 'DRA', 'CSProb', 'Age'],
