@@ -210,7 +210,7 @@ if player_name:
     similarity_df['Length'] = similarity_df['Length'].apply(lambda x: f"{int(x)} years" if pd.notnull(x) else 'N/A')
 
     # Display the reordered similarity table
-    st.write("### 5 Most Similar Players with Cluster-Specific Stats")
+    st.write("### 5 Most Similar Platform Seasons")
     st.markdown(similarity_df.to_html(index=False, escape=False), unsafe_allow_html=True)
 
 
