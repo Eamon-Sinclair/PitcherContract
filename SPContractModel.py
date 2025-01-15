@@ -4,14 +4,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 
-# Load the necessary datasets
+#Load Datasets
 simulated_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/Sim_Data.csv")
 contract_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/FAContract.csv")
 similarity_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/Similar_Players.csv")
 pitcher_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/Pitcher_Data.csv")
 combined_data = pd.read_csv("https://raw.githubusercontent.com/Eamon-Sinclair/PitcherContract/main/Combined.csv")
 
-# Page setup
+#Begin Page
 st.title("Starting Pitcher Contract Model")
 
 st.markdown("""
@@ -22,15 +22,14 @@ st.markdown("""
     **Data**: [Baseball Prospectus](https://www.baseballprospectus.com/)
 """, unsafe_allow_html=True)
 
-# Player selection
+#Select Player
 players = simulated_data['Player'].unique()
 player_name = st.selectbox("Select a Player", players)
 
+#Initial Table
 if player_name:
-    # Filter data for the selected player
     player_data = simulated_data[simulated_data['Player'] == player_name]
     
-    # Extract bounds and best estimates
     lower_aav = player_data['Lower Bound AAV'].iloc[0]
     median_aav = player_data['Median AAV'].iloc[0]
     upper_aav = player_data['Upper Bound AAV'].iloc[0]
@@ -38,12 +37,10 @@ if player_name:
     median_length = player_data['Median Length'].iloc[0]
     upper_length = player_data['Upper Bound Length'].iloc[0]
 
-    # Calculate total contract values
     lower_total = lower_aav * round(lower_length)
     median_total = median_aav * round(median_length)
     upper_total = upper_aav * round(upper_length)
 
-    # Find the most recent FA contract
     recent_contract = contract_data[contract_data['Player'] == player_name].sort_values(by='Year', ascending=False).head(1)
     if not recent_contract.empty:
         recent_aav = recent_contract.iloc[0]['AAV']
@@ -53,7 +50,6 @@ if player_name:
     else:
         last_contract = ["No FA Contract From '21 - '24", "N/A", "N/A"]
 
-    # Prepare table data
     predicted_values = {
         "Contract": ["AAV", "Length", "Total Value"],
         "Lower Bound Estimate": [
@@ -75,7 +71,6 @@ if player_name:
     }
     table_df = pd.DataFrame(predicted_values)
 
-    # Define custom CSS for shading the first table
     css = """
     <style>
         .predicted-table th {
@@ -91,21 +86,17 @@ if player_name:
     """
     st.markdown(css, unsafe_allow_html=True)
 
-    # Prepare the predicted values table with the custom CSS applied
     predicted_values_html = table_df.to_html(index=False, escape=False)
     predicted_values_html = f'<div class="predicted-table blue-shade">{predicted_values_html}</div>'
 
-    # Display the predicted values table with shading
     st.markdown(predicted_values_html, unsafe_allow_html=True)
 
-    # Safely extract simulation data
     sim_aav = player_data[[col for col in simulated_data.columns if col.startswith("SimAAV")]].values.flatten()
     sim_length = player_data[[col for col in simulated_data.columns if col.startswith("SimLength")]].values.flatten()
 
-    # Create subplots to display both graphs side by side
+    #Histograms
     fig, axes = plt.subplots(1, 2, figsize=(20, 8))  # 1 row, 2 columns
 
-    # Plot AAV Probability Density
     sns.kdeplot(sim_aav, fill=True, color="lightblue", label="AAV Distribution", ax=axes[0])
     axes[0].axvline(player_data['Median AAV'].iloc[0], color='red', linestyle='--', label='Median AAV')
     axes[0].axvline(player_data['Lower Bound AAV'].iloc[0], color='black', linestyle='--', label='Lower Bound AAV')  # Lower bound
@@ -119,13 +110,11 @@ if player_name:
     axes[0].yaxis.get_offset_text().set_visible(False)  # Hide offset text if present
     axes[0].ticklabel_format(style='plain', axis='y')
 
-    # Increase font size of ticks
     y_ticks = axes[0].get_yticks()
     axes[0].set_yticklabels([f'{round(tick * 1e7, 1):,}' for tick in y_ticks], fontsize=18)  # Increase y-tick font size
 
     ticks = axes[0].get_xticks()
     axes[0].set_xticklabels([f'{round(tick / 1_000_000, 2)}' for tick in ticks], fontsize=18)  # Increase x-tick font size
-
 
     sns.kdeplot(sim_length, fill=True, color="lightgreen", label="Length Distribution", ax=axes[1])
     axes[1].axvline(player_data['Median Length'].iloc[0], color='red', linestyle='--', label='Median Length')
@@ -135,76 +124,60 @@ if player_name:
     axes[1].set_ylabel("Density", fontsize=20)  # Increase font size for y-axis label
     axes[1].set_title(f"Length Distribution for {player_name}", fontsize=24)  # Increase font size for title
     axes[1].legend(loc='upper right', fontsize=12)  # Increase font size for legend
-
-    # Increase font size of ticks
-# Increase font size of y-tick labels
+   
     y_ticks = axes[1].get_yticks()
     axes[1].set_yticklabels([f'{tick:.2f}' for tick in y_ticks], fontsize=18)  # Increase y-tick font size
 
-    # Increase font size of x-tick labels
     ticks = axes[1].get_xticks()
     axes[1].set_xticklabels([f'{tick:.2f}' for tick in ticks], fontsize=18)  # Increase x-tick font size
-  # Increase x-tick font size
 
-    # Display the plots
     st.pyplot(fig)
     
-    # Define cluster-specific stats
+    #Similarity Table
     cluster_stats = {
         0: ['WARP', 'IPGS', 'GS', 'DRA', 'CSProb', 'Age'],
         1: ['IPGS', 'WHIP', 'Swing', 'RA9', 'DRA', 'Age'],
         2: ['DRA', 'KBB', 'WARP', 'Age', 'ZContact', 'CSProb']
     }
 
-    # Fetch target player's cluster from Combined data
     target_player_cluster = simulated_data[simulated_data['Player'] == player_name]['Cluster'].iloc[0]
 
-    # Now that cluster_stats is defined, you can safely get the relevant stats for the target player
     target_cluster_stats = cluster_stats.get(target_player_cluster, [])
 
-    # Fetch target player's stats based on their cluster from pitcher_data
     target_player_data = pitcher_data[pitcher_data['Player'] == player_name]
 
     if not target_player_data.empty:
         # Fetch the relevant stats for the target player from pitcher_data based on their cluster
         target_player_stats = target_player_data[target_cluster_stats]
 
-        # Create a dictionary for target player stats (without Year)
         target_player_dict = {
             'Similar Player': player_name,
         }
 
-        # Add the stats for the target player to the dictionary
         for stat in target_cluster_stats:
             target_player_dict[stat] = target_player_stats[stat].values[0] if not target_player_stats.empty else 'N/A'
 
-        # Display the target player stats table above the similarity table
         target_player_df = pd.DataFrame([target_player_dict])
         st.write(f" ### {player_name} 2024 Season Stats")
         st.markdown(target_player_df.to_html(index=False, escape=False), unsafe_allow_html=True)
 
-    # Initialize list for similar players
     similar_players = []
 
-    # Find the row that matches the Target Player (player_name)
     target_row = similarity_data[similarity_data['Target Player'] == player_name]
 
     if not target_row.empty:
         # Loop through the columns that contain similar players and their years
-        for i in range(1, len(target_row.columns), 2):  # Skip 'Target Player' column, and step through similar player and year columns
-            similar_player = target_row.iloc[0, i]  # Get the similar player name
-            similar_year = target_row.iloc[0, i + 1]  # Get the year for that similar player
+        for i in range(1, len(target_row.columns), 2):
+            similar_player = target_row.iloc[0, i]  
+            similar_year = target_row.iloc[0, i + 1]  
 
-            # Get corresponding data for the similar player and year from Combined
             similar_player_data = combined_data[(combined_data['Player'] == similar_player) & 
                                                 (combined_data['Year'] == similar_year)]
 
             if not similar_player_data.empty:
-                # Fetch AAV and Length from the Combined dataset
                 aav = similar_player_data['AAV'].values[0]
                 length = similar_player_data['Length'].values[0]
                 
-                # Fetch additional stats for similar player based on cluster
                 similar_player_stats = similar_player_data[target_cluster_stats]
 
                 similar_player_dict = {
@@ -214,24 +187,19 @@ if player_name:
                     'Length': length
                 }
 
-                # Add the stats to the dictionary
                 for stat in target_cluster_stats:
                     similar_player_dict[stat] = similar_player_stats[stat].values[0] if not similar_player_stats.empty else 'N/A'
 
                 similar_players.append(similar_player_dict)
 
-    # Display the Similarity Table with stats
     similarity_df = pd.DataFrame(similar_players)
 
-    # Reorder the columns as 'Player', 'Year', {stats}, 'AAV', 'Length'
     ordered_columns = ['Similar Player', 'Year'] + target_cluster_stats + ['AAV', 'Length']
     similarity_df = similarity_df[ordered_columns]
 
-    # Round the values in 'AAV' column to 2 decimal places
     similarity_df['AAV'] = similarity_df['AAV'].apply(lambda x: f"${int(x):,}" if pd.notnull(x) else 'N/A')
     similarity_df['Length'] = similarity_df['Length'].apply(lambda x: f"{int(x)} years" if pd.notnull(x) else 'N/A')
 
-    # Display the reordered similarity table
     st.write("### 5 Most Similar Platform Seasons")
     st.markdown(similarity_df.to_html(index=False, escape=False), unsafe_allow_html=True)
 
